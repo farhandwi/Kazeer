@@ -67,27 +67,20 @@ class TransactionItemsResource extends Resource
 
     public static function table(Table $table): Table
     {
-        // Filter by transaction_id from URL parameter if present
-        $transactionId = request()->query('transaction_id');
-        
         return $table
-            ->modifyQueryUsing(function (Builder $query) use ($transactionId) {
-                if ($transactionId) {
-                    $query->where('transaction_id', $transactionId);
-                }
-                return $query;
-            })
             ->columns([
                 Tables\Columns\TextColumn::make('transaction.code')
                     ->label('Invoice Number')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(fn () => !request()->has('transaction_id')),
                     
                 Tables\Columns\TextColumn::make('transaction.name')
                     ->label('Customer')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->visible(fn () => !request()->has('transaction_id')),
                     
                 Tables\Columns\TextColumn::make('food.name')
                     ->label('Food Name')
@@ -187,7 +180,6 @@ class TransactionItemsResource extends Resource
                     }),
             ])
             ->actions([
-                // Tambahkan action untuk melihat receipt di sini jika diperlukan
                 Tables\Actions\Action::make('view_receipt')
                     ->label('View Receipt')
                     ->icon('heroicon-o-document-text')

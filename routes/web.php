@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\QRController;
 use App\Http\Middleware\CheckTableNumber;
@@ -55,3 +56,7 @@ Route::controller(QRController::class)->group(function (){
     Route::get('/scan', ScanPage::class)->name('product.scan');
     Route::get('/{tableNumber}', 'checkCode')->name('product.scan.table');
 });
+
+Route::get('/receipt/{transaction}/download', [ReceiptController::class, 'download'])
+    ->name('receipt.download')
+    ->middleware(['auth']);

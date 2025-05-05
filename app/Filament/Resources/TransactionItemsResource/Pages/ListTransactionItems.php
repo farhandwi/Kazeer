@@ -7,6 +7,9 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Transaction;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class ListTransactionItems extends ListRecords
 {
@@ -36,5 +39,37 @@ class ListTransactionItems extends ListRecords
         }
         
         return "Transaction Items";
+    }
+    
+    // Override the table query to correctly filter by transaction_id
+    protected function getTableQuery(): Builder
+    {
+        $query = static::getResource()::getEloquentQuery();
+        
+        // Get transaction_id from the request
+        $transactionId = request()->query('transaction_id');
+        
+        // Apply transaction_id filter if present
+        if ($transactionId) {
+            $query->where('transaction_id', $transactionId);
+        }
+        
+        return $query;
+    }
+    
+    // Ensure pagination maintains the transaction_id parameter
+    protected function paginateTableQuery(Builder $query): Paginator|LengthAwarePaginator|CursorPaginator
+    {
+        $paginator = parent::paginateTableQuery($query);
+        
+        // Get transaction_id from the request
+        $transactionId = request()->query('transaction_id');
+        
+        if ($transactionId) {
+            // Add transaction_id to pagination links
+            $paginator->appends(['transaction_id' => $transactionId]);
+        }
+        
+        return $paginator;
     }
 }
