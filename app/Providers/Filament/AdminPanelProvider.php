@@ -30,6 +30,13 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->darkMode()
+            ->sidebarWidth('18rem')
+            // ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('5rem')
+            ->brandName('Kazeer Admin')
+            ->brandLogo(fn () => view('filament.logo'))
+            ->brandLogoHeight('3rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

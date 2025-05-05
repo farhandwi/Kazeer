@@ -16,6 +16,11 @@ class Transaction extends Model
         return $this->belongsTo(Barcode::class);
     }
 
+    public function transactionItems()
+{
+    return $this->hasMany(TransactionItems::class);
+}
+
     public function items()
     {
         return $this->hasMany(TransactionItems::class, 'transaction_id');

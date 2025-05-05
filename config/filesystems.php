@@ -74,4 +74,9 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    'brand' => [
+        'logo' => '/images/logo.png',
+        'name' => null,
+    ],
+    
 ];
