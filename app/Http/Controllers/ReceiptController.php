@@ -22,7 +22,7 @@ class ReceiptController extends Controller
             abort(403, 'Receipt only available for paid transactions');
         }
         
-        $items = $transaction->transactionItems;
+        $items = $transaction->transactionItems()->with('transaction', 'food')->get();
         
         $pdf = Pdf::loadView('pdf.receipt', [
             'transaction' => $transaction,
