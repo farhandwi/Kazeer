@@ -1,60 +1,67 @@
 <?php
-
 namespace App\Livewire\Pages;
-
-use App\Models\Category;
-use App\Models\Foods;
-use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use App\Models\Foods;
+use App\Models\Category;
 
+#[Layout('components.layouts.page')]
+#[Title('MyFOOD - Home')]
 class HomePage extends Component
 {
+    public $term = '';
+    public $isCustomerDataComplete = false; // Ubah default ke false
     public $promos;
     public $favorites;
     public $categories;
-
     public $tableNumber;
-    public $name;
-    public $phone;
 
-    public $term = '';
+    protected $listeners = ['saved-user-info' => 'handleUserInfoSaved'];
 
-    public bool $isCustomerDataComplete = true;
-
-    public function mount(Foods $foods)
+    public function mount()
     {
+        // Inisialisasi data
         $this->categories = Category::all();
+        
+        $foods = new Foods();
         $this->promos = $foods->getPromo();
         $this->favorites = $foods->getFavoriteFood();
+        
         $this->tableNumber = session('table_number');
-
+        
+        // Cek apakah data customer sudah lengkap
         $name = session('name');
         $phone = session('phone');
-
+        
+        // Jika nama dan phone sudah ada, maka data sudah lengkap (modal tidak perlu ditampilkan)
         if ($name && $phone) {
             $this->isCustomerDataComplete = false;
+        } else {
+            $this->isCustomerDataComplete = true; // Tampilkan modal jika data belum lengkap
         }
     }
 
-    public function saveUserInfo()
+    public function handleUserInfoSaved()
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-        ]);
-
-        session(['name' => $this->name, 'phone' => $this->phone]);
-        $this->name = session('name');
+        // Tutup modal setelah data berhasil disimpan
+        $this->isCustomerDataComplete = false;
+        
+        // Optional: Show success message
+        session()->flash('message', 'Data berhasil disimpan!');
     }
 
-    #[Layout('components.layouts.page')]
-    public function render(Foods $foods)
+    public function render()
     {
-        sleep(1);
-        $searchResult = $foods->search(trim($this->term))->get();
-
+        $searchResult = collect();
+        
+        if (!empty(trim($this->term))) {
+            $foods = new Foods();
+            $searchResult = $foods->search(trim($this->term))->get();
+        }
+        
         return view('home', [
-            'searchResult' => $searchResult,
+            'searchResult' => $searchResult
         ]);
     }
 }

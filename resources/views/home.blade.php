@@ -12,10 +12,8 @@
                         src="{{ asset("assets/images/logo.png") }}"
                         class="scale-[0.9]"
                         alt="MyFOOD logo"
+                        style="width: 150px"
                     />
-                    <span class="text-lg font-semibold text-primary-50">
-                        MyFOOD
-                    </span>
                 </div>
                 <div
                     style="
@@ -45,7 +43,7 @@
                         placeholder="Cari Makanan"
                         wire:model.live.debounce.300ms="term"
                     />
-                    @if (! $term)
+                    @if (!$term)
                         <img
                             src="{{ asset("assets/icons/search-icon.svg") }}"
                             alt="Search Icon"
@@ -57,10 +55,12 @@
         </div>
     </header>
 
-    <main
-        class="mb-24 mt-8 space-y-6 font-poppins"
-        x-data="{ open: @entangle("isCustomerDataComplete") }"
-    >
+    <!-- Modal Customer Data - Hanya satu instance -->
+    @if ($isCustomerDataComplete)
+        <livewire:components.customer-modal />
+    @endif
+
+    <main class="mb-24 mt-8 space-y-6 font-poppins">
         <div wire:loading class="w-full">
             <div class="my-2 w-full">
                 <p class="text-center text-black-70">
@@ -68,122 +68,121 @@
                 </p>
             </div>
         </div>
+        
         <div wire:loading.remove>
-        @if ($term == "")
-            <div>
-                <div class="container flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-black-100">
-                        Today's promo
-                    </h3>
-                    <a
-                        href="/food/promo"
-                        wire:navigate
-                        class="block font-semibold text-primary-50"
+            @if ($term == "")
+                <div>
+                    <div class="container flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-black-100">
+                            Today's promo
+                        </h3>
+                        <a
+                            href="/food/promo"
+                            wire:navigate
+                            class="block font-semibold text-primary-50"
+                        >
+                            See More
+                        </a>
+                    </div>
+                    <div
+                        class="hide-scrollbar ml-4 flex items-stretch gap-4 overflow-x-auto py-4"
                     >
-                        See More
-                    </a>
+                        @if (isset($promos) && count($promos) > 0)
+                            @foreach ($promos as $promo)
+                                <livewire:components.food-card
+                                    wire:key="promo-{{ $promo->id }}"
+                                    :data="$promo"
+                                    :categories="$categories"
+                                    :isGrid="false"
+                                />
+                            @endforeach
+                        @else
+                            <div class="my-2 w-full">
+                                <p class="text-center text-black-70">
+                                    No promo available
+                                </p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-                <div
-                    class="hide-scrollbar ml-4 flex items-stretch gap-4 overflow-x-auto py-4"
-                >
-                    @if (isset($promos) && count($promos) > 0)
-                        @foreach ($promos as $promo)
-                            <livewire:components.food-card
-                                wire:key="promo-{{ $promo->id }}"
-                                :data="$promo"
-                                :categories="$categories"
-                                :isGrid="false"
-                            />
-                        @endforeach
-                    @else
-                        <div class="my-2 w-full">
-                            <p class="text-center text-black-70">
-                                No promo available
-                            </p>
-                        </div>
-                    @endif
-                </div>
-            </div>
 
-            <div class="container">
-                <div
-                    style="
-                        background-image: url('{{ asset("assets/images/bg-container.png") }}');
-                    "
-                    class="space-y-6 rounded-2xl bg-cover p-6 text-center text-white"
-                >
-                    <h3 class="text-left text-2xl font-semibold text-black-100">
-                        Cita Rasa Lokal
-                        <br />
-                        Harga Super Lokal!
-                    </h3>
-                    <a
-                        href="/food"
-                        wire:navigate
-                        class="block w-fit rounded-full bg-primary-50 px-6 py-2 font-semibold text-white"
+                <div class="container">
+                    <div
+                        style="
+                            background-image: url('{{ asset("assets/images/bg-container.png") }}');
+                        "
+                        class="space-y-6 rounded-2xl bg-cover p-6 text-center text-white"
                     >
-                        Lihat Semua Menu
-                    </a>
+                        <h3 class="text-left text-2xl font-semibold text-black-100">
+                            Cita Rasa Lokal
+                            <br />
+                            Harga Super Lokal!
+                        </h3>
+                        <a
+                            href="/food"
+                            wire:navigate
+                            class="block w-fit rounded-full bg-primary-50 px-6 py-2 font-semibold text-white"
+                        >
+                            Lihat Semua Menu
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mt-4">
-                <div class="container flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-black-100">
-                        Favorite Food
-                    </h3>
-                    <a
-                        href="/food/favorite"
-                        wire:navigate
-                        class="block font-semibold text-primary-50"
+                <div class="mt-4">
+                    <div class="container flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-black-100">
+                            Favorite Food
+                        </h3>
+                        <a
+                            href="/food/favorite"
+                            wire:navigate
+                            class="block font-semibold text-primary-50"
+                        >
+                            See More
+                        </a>
+                    </div>
+                    <div
+                        class="hide-scrollbar ml-4 flex items-stretch space-x-4 overflow-x-auto py-4"
                     >
-                        See More
-                    </a>
-                </div>
-                <div
-                    class="hide-scrollbar ml-4 flex items-stretch space-x-4 overflow-x-auto py-4"
-                >
-                    @if (isset($favorites) && count($favorites) > 0)
-                        @foreach ($favorites as $favorite)
-                            <livewire:components.food-card
-                                wire:key="favorite-{{ $favorite->id }}"
-                                :data="$favorite"
-                                :categories="$categories"
-                                :isGrid="false"
-                            />
-                        @endforeach
-                    @else
-                        <div class="my-2 w-full">
-                            <p class="text-center text-black-70">
-                                No favorite available
-                            </p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        @else
-            @if ($searchResult->isEmpty())
-                <div class="my-2 w-full">
-                    <p class="text-center text-black-70">
-                        Makanan tidak ditemukan
-                    </p>
+                        @if (isset($favorites) && count($favorites) > 0)
+                            @foreach ($favorites as $favorite)
+                                <livewire:components.food-card
+                                    wire:key="favorite-{{ $favorite->id }}"
+                                    :data="$favorite"
+                                    :categories="$categories"
+                                    :isGrid="false"
+                                />
+                            @endforeach
+                        @else
+                            <div class="my-2 w-full">
+                                <p class="text-center text-black-70">
+                                    No favorite available
+                                </p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @else
-                <div
-                    class="container mb-24 grid grid-cols-2 items-center gap-4"
-                >
-                    @foreach ($searchResult as $result)
-                        <livewire:components.food-card
-                            wire:key="{{ str()->random(50) }}"
-                            :data="$result"
-                            :categories="$categories"
-                        />
-                    @endforeach
-                </div>
+                @if ($searchResult->isEmpty())
+                    <div class="my-2 w-full">
+                        <p class="text-center text-black-70">
+                            Makanan tidak ditemukan
+                        </p>
+                    </div>
+                @else
+                    <div
+                        class="container mb-24 grid grid-cols-2 items-center gap-4"
+                    >
+                        @foreach ($searchResult as $result)
+                            <livewire:components.food-card
+                                wire:key="{{ str()->random(50) }}"
+                                :data="$result"
+                                :categories="$categories"
+                            />
+                        @endforeach
+                    </div>
+                @endif
             @endif
-        @endif
-        <div x-show="open">
-            <livewire:components.customer-modal />
         </div>
     </main>
 </div>
