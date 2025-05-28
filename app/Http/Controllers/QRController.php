@@ -31,7 +31,7 @@ class QRController extends Controller
             if ($exists) {
                 session(['table_number' => $code]);
                 
-                return redirect('home')->with('message', 'Welcome! Code verified successfully.');
+                return redirect()->route('home')->with('message', 'Welcome! Code verified successfully.');
 
             } else {
                 return view('invalid', [
