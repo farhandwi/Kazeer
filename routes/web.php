@@ -60,3 +60,5 @@ Route::controller(QRController::class)->group(function (){
 Route::get('/receipt/{transaction}/download', [ReceiptController::class, 'download'])
     ->name('receipt.download')
     ->middleware(['auth']);
+
+

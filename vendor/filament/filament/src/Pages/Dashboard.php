@@ -17,7 +17,7 @@ class Dashboard extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'pages.dashboard';
+    protected static string $view = 'filament-panels::pages.dashboard';
 
     public static function getNavigationLabel(): string
     {

@@ -100,6 +100,7 @@ class Foods extends Model
         });
     }
 
+
     public function getIsCurrentlyPromoAttribute()
     {
         return $this->promo_start_at && 
@@ -143,4 +144,40 @@ class Foods extends Model
             ->groupBy('categories.id', 'categories.name')
             ->get();
     }
+    
+    public function getFoodsByCategory()
+    {
+        return DB::table('categories')
+            ->select('categories.id', 'categories.name')
+            ->orderBy('categories.name')
+            ->get()
+            ->map(function ($category) {
+                $foods = DB::table('foods')
+                    ->leftJoin('transaction_items', 'foods.id', '=', 'transaction_items.foods_id')
+                    ->select('foods.*', DB::raw('COALESCE(SUM(transaction_items.quantity), 0) as total_sold'))
+                    ->where('foods.categories_id', $category->id)
+                    ->where('foods.is_active', true)
+                    ->where('foods.is_available', true)
+                    ->groupBy('foods.id')
+                    ->get()
+                    ->map(function ($item) {
+                        $item->is_promo = $item->promo_start_at && 
+                            $item->promo_end_at && 
+                            now()->between($item->promo_start_at, $item->promo_end_at);
+                        return $item;
+                    });
+    
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'foods' => $foods
+                ];
+            })
+            ->filter(function ($category) {
+                // Hanya menampilkan kategori yang memiliki makanan
+                return count($category['foods']) > 0;
+            })
+            ->values();
+    }
+
 }

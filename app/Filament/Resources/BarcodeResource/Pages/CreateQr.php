@@ -6,7 +6,7 @@ use App\Filament\Resources\BarcodeResource;
 use Filament\Forms\Form;
 use Filament\Forms;
 use Filament\Resources\Pages\Page;
-use App\Models\Barcode; // Ensure the Barcode model is imported
+use App\Models\Barcode;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +38,7 @@ class CreateQr extends Page
 
     public function save(): void
     {
-        $host = $_SERVER['HTTP_HOST'] . '/' . $this->table_number;
+        $host = env('APP_URL', 'https://kazeer.id') . '/' . $this->table_number;
 
         // Generate the QR code as an SVG image
         $svgContent = QrCode::margin(1)->size(200)->generate($host);

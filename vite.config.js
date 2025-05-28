@@ -3,10 +3,16 @@ import laravel from "laravel-vite-plugin";
 
 export default defineConfig({
     server: {
-        hmr: {
-          host: "localhost",
-        },
+      cors: {
+        origin: 'https://kazeer.id',
+        credentials: true
+      },
+      hmr: {
+        host: 'localhost',
+        protocol: 'ws',
+      },
     },
+
     plugins: [
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],

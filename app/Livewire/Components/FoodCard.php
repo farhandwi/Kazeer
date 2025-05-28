@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Livewire\Components;
-
 use Livewire\Component;
 
 class FoodCard extends Component

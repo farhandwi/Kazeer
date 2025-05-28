@@ -18,7 +18,7 @@ window.addEventListener('load', function () {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    table_number: decodedText.split('/')[1]
+                    table_number: decodedText.split('/')[3]
                 })
             })
             .then(response => response.json())
@@ -26,7 +26,9 @@ window.addEventListener('load', function () {
                 if (data.status === 'success') {
                     window.location.href = "/";
                 } else {
+                    alert("An error occurred while processing the QR code.");
                     console.error("Failed to store QR result", data);
+                    window.location.href = "/scan";
                 }
                 html5QRCodeScanner.clear();
                 stream.getTracks().forEach(track => track.stop());
