@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Barcode;
+use Illuminate\Support\Facades\Log;
 
 class QRController extends Controller
 {
@@ -26,11 +27,12 @@ class QRController extends Controller
     {
         if (preg_match('/^[a-zA-Z]\d{4}$/', $code)) {
             $exists = Barcode::where('table_number', $code)->exists();
-            
+
             if ($exists) {
                 session(['table_number' => $code]);
                 
-                return redirect()->route('home');
+                return redirect('home')->with('message', 'Welcome! Code verified successfully.');
+
             } else {
                 return view('invalid', [
                     'message' => 'Code not found in the database.',

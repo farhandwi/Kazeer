@@ -8663,16 +8663,16 @@
         },
         {
             "name": "xendit/xendit-php",
-            "version": "6.3.0",
+            "version": "6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xendit/xendit-php.git",
-                "reference": "af0755029f15bd24ad3752342fea715562071317"
+                "reference": "1b525c90f88578d05593f7a714363544cd752620"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xendit/xendit-php/zipball/af0755029f15bd24ad3752342fea715562071317",
-                "reference": "af0755029f15bd24ad3752342fea715562071317",
+                "url": "https://api.github.com/repos/xendit/xendit-php/zipball/1b525c90f88578d05593f7a714363544cd752620",
+                "reference": "1b525c90f88578d05593f7a714363544cd752620",
                 "shasum": ""
             },
             "require": {
@@ -8717,9 +8717,9 @@
             ],
             "support": {
                 "issues": "https://github.com/xendit/xendit-php/issues",
-                "source": "https://github.com/xendit/xendit-php/tree/6.3.0"
+                "source": "https://github.com/xendit/xendit-php/tree/6.4.0"
             },
-            "time": "2025-03-13T05:39:26+00:00"
+            "time": "2025-05-16T04:31:28+00:00"
         }
     ],
     "packages-dev": [

@@ -1374,9 +1374,9 @@
             'dev_requirement' => false,
         ),
         'xendit/xendit-php' => array(
-            'pretty_version' => '6.3.0',
-            'version' => '6.3.0.0',
-            'reference' => 'af0755029f15bd24ad3752342fea715562071317',
+            'pretty_version' => '6.4.0',
+            'version' => '6.4.0.0',
+            'reference' => '1b525c90f88578d05593f7a714363544cd752620',
             'type' => 'library',
             'install_path' => __DIR__ . '/../xendit/xendit-php',
             'aliases' => array(),
