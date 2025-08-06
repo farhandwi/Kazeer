@@ -422,10 +422,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if (blank($this->getState())) {
-            return null;
-        }
-
         if (! $this->hasEditOptionActionFormSchema()) {
             return null;
         }
@@ -454,7 +450,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? 'heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
-            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'))
+            ->visible(fn (): bool => filled($this->getState()));
 
         if ($this->modifyManageOptionActionsUsing) {
             $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
@@ -472,9 +469,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ?array<string, mixed>
      */
-    public function getEditOptionActionFormData(): array
+    public function getEditOptionActionFormData(): ?array
     {
         return $this->evaluate($this->fillEditOptionActionFormUsing);
     }
@@ -776,6 +773,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     'query' => $relationshipQuery,
                     'search' => null,
                 ]) ?? $relationshipQuery;
+            }
+
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $component->optionsLimit($baseRelationshipQuery->limit);
+            } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
+                $relationshipQuery->limit($component->getOptionsLimit());
             }
 
             $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
@@ -1081,7 +1086,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
             $isFirst = true;
 
-            foreach ($this->getSearchColumns() as $searchColumn) {
+            foreach ($this->getSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
@@ -1207,8 +1212,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasDynamicSearchResults(): bool
     {
-        if ($this->hasRelationship() && empty($this->searchColumns)) {
-            return ! $this->isPreloaded();
+        if ($this->hasRelationship() && blank($this->getSearchColumns())) {
+            return false;
         }
 
         return $this->getSearchResultsUsing instanceof Closure;

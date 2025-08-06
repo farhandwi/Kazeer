@@ -33,6 +33,24 @@ class Foods extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function scopeGetPromo($query)
+    {
+        $now = now();
+        return $query->where('promo_start_at', '<=', $now)
+                    ->where('promo_end_at', '>=', $now)
+                    ->groupBy('foods.id');
+    }
+
+    public function scopeGetFavoriteFood($query)
+    {
+        return $query
+            ->join('transaction_items', 'foods.id', '=', 'transaction_items.foods_id')
+            ->select('foods.*', DB::raw('SUM(transaction_items.quantity) as total_sold'))
+            ->where('foods.is_active', true)
+            ->groupBy('foods.id')
+            ->orderByDesc('total_sold');
+    }
+
     public function getAllFoods()
     {
         return DB::table('foods')

@@ -7,6 +7,16 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="icon" href="{{ asset('assets/images/favicon.png') }}" type="image/png">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .hide-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
 
         <script
             src="https://unpkg.com/html5-qrcode"

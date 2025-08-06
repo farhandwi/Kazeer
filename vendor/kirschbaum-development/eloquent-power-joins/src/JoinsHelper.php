@@ -41,6 +41,8 @@ class JoinsHelper
 
     public static function make($model): static
     {
+        static::$instances ??= new WeakMap();
+
         return static::$instances[$model] ??= new self();
     }
 
@@ -152,12 +154,12 @@ class JoinsHelper
     {
         if ($relation instanceof BelongsToMany || $relation instanceof HasManyThrough) {
             return [
-                md5($relationName.'table1'.time()),
-                md5($relationName.'table2'.time()),
+                md5($relationName.'table1'.uniqid('', true)),
+                md5($relationName.'table2'.uniqid('', true)),
             ];
         }
 
-        return md5($relationName.time());
+        return md5($relationName.uniqid('', true));
     }
 
     /**
@@ -188,10 +190,10 @@ class JoinsHelper
                     }
                 }
 
-                $farParentTable = $relation->getFarParent()->getTable();
-                if (isset($callback[$farParentTable])) {
-                    $fakeJoinCallback = new FakeJoinCallback($relation->getBaseQuery(), 'inner', $farParentTable);
-                    $callback[$farParentTable]($fakeJoinCallback);
+                $relatedTable = $relation->getRelated()->getTable();
+                if (isset($callback[$relatedTable])) {
+                    $fakeJoinCallback = new FakeJoinCallback($relation->getBaseQuery(), 'inner', $relatedTable);
+                    $callback[$relatedTable]($fakeJoinCallback);
 
                     if ($fakeJoinCallback->getAlias()) {
                         $alias[1] = $fakeJoinCallback->getAlias();
